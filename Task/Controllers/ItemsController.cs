@@ -16,10 +16,40 @@ namespace Task.Controllers
         {
             _appDbContext = AppDBContext;
         }
-        public IActionResult Index()
+        public IActionResult Index(string sortOrder, string searchString)
         {
-            var listdata = _appDbContext.Items.ToList();
-            return View(listdata);
+            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewData["PriceSortParm"] = String.IsNullOrEmpty(sortOrder) ? "price_desc" : "price_Asc";
+            //ViewData["PriceSortParm"] = String.IsNullOrEmpty(sortOrder) ? "price_Asc" : "";
+            ViewData["DesStortParm"] = String.IsNullOrEmpty(sortOrder) ? "des_desc" : "";
+            ViewData["CurrentFilter"] = searchString;
+            var sd = _appDbContext.Items.ToList();
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                sd = sd.Where(i => i.Name.Contains(searchString)).ToList();
+            }
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    sd = sd.OrderByDescending(i => i.Name).ToList();
+                    break;
+                case "price_desc":
+                    sd = sd.OrderByDescending(i => i.Price).ToList();
+                    break;
+                    case "des_desc":
+                    sd = sd.OrderByDescending(i => i.Description).ToList();
+                    break;
+                case "price_Asc":
+                    sd = sd.OrderBy(i => i.Price).ToList();
+                    break;
+              
+
+                default:
+                    sd = sd.OrderBy(i => i.Name).ToList();
+                    break;
+            }
+            return View(sd);
         }
 
 
