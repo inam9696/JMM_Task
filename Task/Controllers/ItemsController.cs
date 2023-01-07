@@ -8,7 +8,7 @@ using Task.Models;
 
 namespace Task.Controllers
 {
-    //git
+   
     [Authorize]
     public class ItemsController : Controller
     {
